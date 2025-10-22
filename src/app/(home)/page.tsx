@@ -1,3 +1,6 @@
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+
 export default function Page() {
   return (
     <div>
@@ -7,7 +10,14 @@ export default function Page() {
         </h1>
       </section>
       <div className="p-4">
-        Welcome!
+        <div className="flex gap-3">
+          <Button asChild>
+            <Link href="/sign-in" prefetch={false}>Sign in</Link>
+          </Button>
+          <Button asChild>
+            <Link href="/sign-up" prefetch={false}>Sign up</Link>
+          </Button>
+        </div>
       </div>
     </div>
   )

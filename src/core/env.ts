@@ -11,7 +11,7 @@ export const env = createEnv({
   },
   onValidationError: issues => {
     console.error(
-      "❌ Invalid server environment variables ❌",
+      "❌ Invalid environment variables ❌",
       JSON.stringify(issues, null, 2),
     )
     // eslint-disable-next-line node/no-process-exit
