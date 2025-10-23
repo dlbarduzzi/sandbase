@@ -12,7 +12,7 @@ export function AuthLogo({ isPending }: { isPending: boolean }) {
         className={cn(
           "rounded-full outline-none focus-visible:ring-2",
           "focus-visible:ring-gray-900 focus-visible:ring-offset-2",
-          isPending && "pointer-events-none",
+          isPending && "pointer-events-none focus-visible:ring-transparent",
         )}
       >
         <Image

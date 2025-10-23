@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card"
 
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 
 import { AuthLogo } from "./logo"
 import { AuthLayout } from "./layout"
@@ -49,7 +50,9 @@ export function SignUp() {
             <AuthLogo isPending={isPending} />
             <div className="mt-6 space-y-1.5">
               <CardTitle>Sign up</CardTitle>
-              <CardDescription>Create an account and start exploring.</CardDescription>
+              <CardDescription>
+                Create an account and start exploring.
+              </CardDescription>
             </div>
           </CardHeader>
           <CardContent className="grid grid-cols-1 gap-y-8">
@@ -57,11 +60,12 @@ export function SignUp() {
             <AuthSeparator />
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <Button
+                type="button"
                 size="md"
                 disabled={isPending}
                 className="w-full"
               >
-                Sign up
+                {isPending ? <Spinner /> : "Sign up"}
               </Button>
             </form>
           </CardContent>
