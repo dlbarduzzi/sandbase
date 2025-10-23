@@ -1,5 +1,10 @@
 "use client"
 
+import type { SignInSchema } from "@/services/auth/schemas/sign-in"
+
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+
 import {
   Card,
   CardContent,
@@ -9,12 +14,33 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
+import { Button } from "@/components/ui/button"
+
 import { AuthLogo } from "./logo"
 import { AuthLayout } from "./layout"
 import { AuthFooter } from "./footer"
+import { SocialButtons } from "./social"
+import { AuthSeparator } from "./separator"
+
+import { signInSchema } from "@/services/auth/schemas/sign-in"
 
 export function SignIn() {
-  const isPending = false
+  const form = useForm<SignInSchema>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      rememberMe: undefined,
+    },
+  })
+
+  const isPending = form.formState.isSubmitting
+
+  function onSubmit(data: SignInSchema) {
+    // eslint-disable-next-line no-console
+    console.log(data)
+  }
+
   return (
     <AuthLayout>
       <div className="w-full max-w-[400px]">
@@ -26,8 +52,18 @@ export function SignIn() {
               <CardDescription>Enter your details to access your account.</CardDescription>
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-sm">Content...</div>
+          <CardContent className="grid grid-cols-1 gap-y-8">
+            <SocialButtons isPending={isPending} />
+            <AuthSeparator />
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <Button
+                size="md"
+                disabled={isPending}
+                className="w-full"
+              >
+                Sign in
+              </Button>
+            </form>
           </CardContent>
           <CardFooter>
             <AuthFooter
