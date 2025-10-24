@@ -3,6 +3,7 @@
 import type { SignUpSchema } from "@/services/auth/schemas/sign-up"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, Controller } from "react-hook-form"
 
@@ -33,11 +34,14 @@ import { AuthFooter } from "./footer"
 import { SocialButtons } from "./social"
 import { AuthSeparator } from "./separator"
 
-import { cn } from "@/core/css"
-import { delay } from "@/core/time"
+import { authClient } from "@/auth/client"
 import { signUpSchema } from "@/services/auth/schemas/sign-up"
 
+import { cn } from "@/core/css"
+
 export function SignUp() {
+  const router = useRouter()
+
   const [showPasswordValue, setShowPasswordValue] = useState(false)
 
   const form = useForm<SignUpSchema>({
@@ -51,13 +55,18 @@ export function SignUp() {
 
   const isPending = form.formState.isSubmitting
 
-  async function onSubmit(data: SignUpSchema) {
+  function onSubmit(data: SignUpSchema) {
     setShowPasswordValue(() => false)
 
-    await delay(3000)
-
-    // eslint-disable-next-line no-console
-    console.log(data)
+    authClient.signUp.email(data, {
+      onError: (ctx) => {
+        console.error("Sign up failed...")
+        console.error(ctx.error)
+      },
+      onSuccess: () => {
+        router.push("/sign-in")
+      },
+    })
   }
 
   return (

@@ -38,9 +38,10 @@ import { AuthFooter } from "./footer"
 import { SocialButtons } from "./social"
 import { AuthSeparator } from "./separator"
 
-import { cn } from "@/core/css"
-import { delay } from "@/core/time"
+import { authClient } from "@/auth/client"
 import { signInSchema } from "@/services/auth/schemas/sign-in"
+
+import { cn } from "@/core/css"
 
 export function SignIn() {
   const [showPasswordValue, setShowPasswordValue] = useState(false)
@@ -56,13 +57,21 @@ export function SignIn() {
 
   const isPending = form.formState.isSubmitting
 
-  async function onSubmit(data: SignInSchema) {
+  function onSubmit(data: SignInSchema) {
     setShowPasswordValue(() => false)
 
-    await delay(3000)
-
-    // eslint-disable-next-line no-console
-    console.log(data)
+    authClient.signIn.email(data, {
+      onError: (ctx) => {
+        console.error("Sign in failed...")
+        console.error(ctx.error)
+      },
+      onSuccess: (ctx) => {
+        // eslint-disable-next-line no-console
+        console.log("Sign in success...")
+        // eslint-disable-next-line no-console
+        console.log(ctx.data)
+      },
+    })
   }
 
   return (
