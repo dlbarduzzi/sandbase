@@ -4,6 +4,7 @@ import Link from "next/link"
 
 import type { SignInSchema } from "@/services/auth/schemas/sign-in"
 
+import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, Controller } from "react-hook-form"
 
@@ -25,21 +26,25 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 
-import { Input } from "@/components/ui/input"
+import { Input, InputPassword } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { Checkbox } from "@/components/ui/checkbox"
 
 import { AuthLogo } from "./logo"
+import { AuthTerms } from "./terms"
 import { AuthLayout } from "./layout"
 import { AuthFooter } from "./footer"
 import { SocialButtons } from "./social"
 import { AuthSeparator } from "./separator"
 
 import { cn } from "@/core/css"
+import { delay } from "@/core/time"
 import { signInSchema } from "@/services/auth/schemas/sign-in"
 
 export function SignIn() {
+  const [showPasswordValue, setShowPasswordValue] = useState(false)
+
   const form = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -51,7 +56,11 @@ export function SignIn() {
 
   const isPending = form.formState.isSubmitting
 
-  function onSubmit(data: SignInSchema) {
+  async function onSubmit(data: SignInSchema) {
+    setShowPasswordValue(() => false)
+
+    await delay(3000)
+
     // eslint-disable-next-line no-console
     console.log(data)
   }
@@ -114,9 +123,8 @@ export function SignIn() {
                             href="/forgot-password"
                             prefetch={false}
                             className={cn(
-                              "text-[13px] text-gray-800 font-medium mr-1",
-                              "outline-none hover:text-gray-600",
-                              "focus-visible:ring-2 focus-visible:ring-offset-2",
+                              "mr-1 text-[13px] leading-none text-gray-900 font-medium outline-none",
+                              "hover:text-gray-700 focus-visible:ring-2 focus-visible:ring-offset-2",
                               "focus-visible:ring-gray-900",
                               isPending && "pointer-events-none focus-visible:ring-0",
                             )}
@@ -125,13 +133,15 @@ export function SignIn() {
                           </Link>
                         </div>
                       </div>
-                      <Input
+                      <InputPassword
                         {...field}
                         id="form-sign-in-password"
                         disabled={isPending}
                         placeholder="Enter your password..."
                         aria-invalid={fieldState.invalid}
                         autoComplete="off"
+                        showPassword={showPasswordValue}
+                        setShowPassword={setShowPasswordValue}
                       />
                       {fieldState.invalid
                         ? <FieldError errors={[fieldState.error]} />
@@ -167,7 +177,7 @@ export function SignIn() {
                           Remember me
                         </FieldLabel>
                         <FieldDescription>
-                          Stay signed in. Avoid on shared devices.
+                          Not recommended on shared devices.
                         </FieldDescription>
                       </FieldContent>
                     </Field>
@@ -195,6 +205,9 @@ export function SignIn() {
             />
           </CardFooter>
         </Card>
+        <div className="px-2 pt-9 pb-6">
+          <AuthTerms action="sign-in" isPending={isPending} />
+        </div>
       </div>
     </AuthLayout>
   )

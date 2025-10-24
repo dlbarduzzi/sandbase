@@ -1,6 +1,7 @@
 import * as React from "react"
 
 import { cn } from "@/core/css"
+import { Eye, EyeOff } from "lucide-react"
 
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
@@ -32,4 +33,37 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   )
 }
 
-export { Input }
+type InputPasswordProps = {
+  showPassword: boolean
+  setShowPassword: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+function InputPassword({
+  showPassword,
+  setShowPassword,
+  ...props
+}: InputPasswordProps & React.ComponentProps<"input">) {
+  return (
+    <div className="relative">
+      <Input
+        type={showPassword ? "text" : "password"}
+        className="pr-12"
+        {...props}
+      />
+      <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+        <div
+          role="button"
+          onClick={() => setShowPassword(() => !showPassword)}
+          className={cn("text-gray-300", props.disabled && "pointer-events-none")}
+        >
+          {showPassword
+            ? <Eye className="size-6" />
+            : <EyeOff className="size-6" />
+          }
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export { Input, InputPassword }
