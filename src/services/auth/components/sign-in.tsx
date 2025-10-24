@@ -118,20 +118,18 @@ export function SignIn() {
                         <FieldLabel htmlFor="form-sign-in-password">
                           Password
                         </FieldLabel>
-                        <div>
-                          <Link
-                            href="/forgot-password"
-                            prefetch={false}
-                            className={cn(
-                              "mr-1 text-[13px] leading-none text-gray-900 font-medium outline-none",
-                              "hover:text-gray-700 focus-visible:ring-2 focus-visible:ring-offset-2",
-                              "focus-visible:ring-gray-900",
-                              isPending && "pointer-events-none focus-visible:ring-0",
-                            )}
-                          >
-                            Forgot password?
-                          </Link>
-                        </div>
+                        <Link
+                          href="/forgot-password"
+                          prefetch={false}
+                          className={cn(
+                            "mr-1 text-[13px] leading-none text-gray-900 font-medium outline-none",
+                            "hover:text-gray-700 focus-visible:ring-2 focus-visible:ring-offset-2",
+                            "focus-visible:ring-gray-900",
+                            isPending && "pointer-events-none focus-visible:ring-0",
+                          )}
+                        >
+                          Forgot Password?
+                        </Link>
                       </div>
                       <InputPassword
                         {...field}
