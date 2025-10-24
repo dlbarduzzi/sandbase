@@ -4,6 +4,7 @@ import Link from "next/link"
 
 import type { SignInSchema } from "@/services/auth/schemas/sign-in"
 
+import { toast } from "sonner"
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, Controller } from "react-hook-form"
@@ -26,10 +27,10 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 
-import { Input, InputPassword } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Input, InputPassword } from "@/components/ui/input"
 
 import { AuthLogo } from "./logo"
 import { AuthTerms } from "./terms"
@@ -39,6 +40,7 @@ import { SocialButtons } from "./social"
 import { AuthSeparator } from "./separator"
 
 import { authClient } from "@/auth/client"
+import { parseCodeError } from "@/auth/schemas"
 import { signInSchema } from "@/services/auth/schemas/sign-in"
 
 import { cn } from "@/core/css"
@@ -61,15 +63,24 @@ export function SignIn() {
     setShowPasswordValue(() => false)
 
     authClient.signIn.email(data, {
-      onError: (ctx) => {
-        console.error("Sign in failed...")
-        console.error(ctx.error)
+      onError: ({ error }) => {
+        const code = parseCodeError(error)
+
+        if (code === "EMAIL_NOT_VERIFIED") {
+          toast.error("Please verify your email address.")
+          return
+        }
+
+        if (code === "INVALID_EMAIL_OR_PASSWORD") {
+          toast.error("Invalid email or password.")
+          return
+        }
+
+        console.error("Unhandled exception. Please check server logs.")
+        toast.error("Something went wrong! Please try again.")
       },
-      onSuccess: (ctx) => {
-        // eslint-disable-next-line no-console
-        console.log("Sign in success...")
-        // eslint-disable-next-line no-console
-        console.log(ctx.data)
+      onSuccess: () => {
+        toast.success("User signed in successfully!")
       },
     })
   }

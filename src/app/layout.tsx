@@ -4,6 +4,8 @@ import { cn } from "@/core/css"
 import { siteConfig } from "@/core/site"
 import { fontGeistSans, fontGeistMono } from "@/core/fonts"
 
+import { Toaster } from "@/components/ui/sonner"
+
 import "@/styles/globals.css"
 
 export const metadata: Metadata = {
@@ -43,6 +45,7 @@ export default function RootLayout({
           fontGeistMono.variable,
         )}
       >
+        <Toaster />
         {children}
       </body>
     </html>

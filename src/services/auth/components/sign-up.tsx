@@ -2,6 +2,7 @@
 
 import type { SignUpSchema } from "@/services/auth/schemas/sign-up"
 
+import { toast } from "sonner"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -23,9 +24,9 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 
-import { Input, InputPassword } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
+import { Input, InputPassword } from "@/components/ui/input"
 
 import { AuthLogo } from "./logo"
 import { AuthTerms } from "./terms"
@@ -35,6 +36,7 @@ import { SocialButtons } from "./social"
 import { AuthSeparator } from "./separator"
 
 import { authClient } from "@/auth/client"
+import { parseCodeError } from "@/auth/schemas"
 import { signUpSchema } from "@/services/auth/schemas/sign-up"
 
 import { cn } from "@/core/css"
@@ -59,11 +61,19 @@ export function SignUp() {
     setShowPasswordValue(() => false)
 
     authClient.signUp.email(data, {
-      onError: (ctx) => {
-        console.error("Sign up failed...")
-        console.error(ctx.error)
+      onError: ({ error }) => {
+        const code = parseCodeError(error)
+
+        if (code === "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL") {
+          toast.error("This email is already registered.")
+          return
+        }
+
+        console.error("Unhandled exception. Please check server logs.")
+        toast.error("Something went wrong! Please try again.")
       },
       onSuccess: () => {
+        toast.success("Registration succeed! Please sign in now.")
         router.push("/sign-in")
       },
     })
