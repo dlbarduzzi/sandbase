@@ -4,6 +4,10 @@ import { createEnv } from "@t3-oss/env-nextjs"
 export const env = createEnv({
   client: {
     NEXT_PUBLIC_APP_URL: z.url(),
+    NEXT_PUBLIC_NODE_ENV: z.enum(["test", "development", "production"]),
+    NEXT_PUBLIC_IS_LOG_STACK_ALLOWED: z
+      .enum(["true", "false"])
+      .transform(value => value === "true"),
   },
   onValidationError: issues => {
     console.error(
@@ -16,6 +20,8 @@ export const env = createEnv({
   runtimeEnv: {
     /* eslint-disable node/no-process-env */
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_NODE_ENV: process.env.NEXT_PUBLIC_NODE_ENV,
+    NEXT_PUBLIC_IS_LOG_STACK_ALLOWED: process.env.NEXT_PUBLIC_IS_LOG_STACK_ALLOWED,
     /* eslint-enable node/no-process-env */
   },
   emptyStringAsUndefined: true,
