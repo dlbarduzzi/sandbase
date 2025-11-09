@@ -1,77 +1,84 @@
-import { env } from "@/core/env/client"
-
 type ErrorFields = {
-  cause?: unknown
   stack?: unknown
+  cause?: unknown
   message: string
 }
 
-const _errorStatuses = ["BAD_REQUEST", "SERVER_ERROR"] as const
-
-type ErrorStatus = typeof _errorStatuses[number]
-
 type ErrorMetadata = {
-  status: ErrorStatus
+  status: "INTERNAL_SERVER_ERROR"
   withStack: boolean
 }
 
 class BaseSafeErrorLogger {
-  private static isDev = env.NEXT_PUBLIC_NODE_ENV === "development"
-  private static isStackAllowed = env.NEXT_PUBLIC_IS_LOG_STACK_ALLOWED
+  private readonly isStackAllowed: boolean
 
-  static sanitize(error: unknown, message: string, metadata: ErrorMetadata) {
+  constructor(isStackAllowed: boolean) {
+    this.isStackAllowed = isStackAllowed
+  }
+
+  public sanitize(error: unknown, message: string, metadata: ErrorMetadata) {
     message = message.trim()
 
     if (message === "") {
       message = "uncaught exception"
     }
 
-    const fields: ErrorFields = { message }
+    let cause: unknown
+    let stack: unknown
+    let errorMessage: string | undefined
 
-    if (!(error instanceof Error)) {
-      return fields
+    if (typeof error === "string") {
+      errorMessage = error.trim() ?? undefined
+    }
+    else {
+      if (error && typeof error === "object") {
+        if ("cause" in error) {
+          cause = error.cause
+        }
+        if ("stack" in error) {
+          stack = error.stack
+        }
+        if ("message" in error && typeof error.message === "string") {
+          errorMessage = error.message.trim() ?? undefined
+        }
+      }
     }
 
-    const errorMessage = error.message.trim()
+    const includeStack = this.isStackAllowed || metadata.withStack
     const finalMessage = errorMessage ? `${message} - ${errorMessage}` : message
 
-    const includeStack = (() => {
-      if (BaseSafeErrorLogger.isDev) {
-        return true
-      }
-      if (BaseSafeErrorLogger.isStackAllowed) {
-        return true
-      }
-      return metadata.withStack === true
-    })()
+    const errorFields: ErrorFields = { message: finalMessage }
 
-    return { message: finalMessage, ...(includeStack && {
-      stack: error.stack ?? undefined,
-      cause: error.cause ?? undefined,
-    }) }
+    if (includeStack && stack !== undefined) {
+      errorFields.stack = stack
+    }
+
+    if (includeStack && cause !== undefined) {
+      errorFields.cause = cause
+    }
+
+    return errorFields
   }
 
-  static createLoggerObject(error: unknown, message: string, metadata: ErrorMetadata) {
-    const sanitized = BaseSafeErrorLogger.sanitize(error, message, metadata)
+  public createRecord(error: unknown, message: string, metadata: ErrorMetadata) {
+    const sanitized = this.sanitize(error, message, metadata)
 
-    const obj = {
+    const record = {
       level: "error",
-      cause: sanitized.cause,
-      stack: sanitized.stack,
       status: metadata.status,
-      message: sanitized.message,
       timestamp: new Date().toISOString(),
+      ...sanitized,
     }
 
-    if (obj.cause === undefined) {
-      delete obj.cause
+    if (record.cause === undefined) {
+      delete record.cause
     }
 
-    if (obj.stack === undefined) {
-      delete obj.stack
+    if (record.stack === undefined) {
+      delete record.stack
     }
 
-    return obj
+    return record
   }
 }
 

@@ -1,13 +1,18 @@
 import type { ErrorMetadata } from "./base"
 
+import { env } from "@/core/env/client"
 import { BaseSafeErrorLogger } from "./base"
 
-class SafeErrorLogger {
-  static log(error: unknown, message: string, metadata: ErrorMetadata) {
-    const obj = BaseSafeErrorLogger.createLoggerObject(error, message, metadata)
-    console.error(obj)
-    return obj
-  }
+const newSafeErrorLogger = new BaseSafeErrorLogger(
+  env.NEXT_PUBLIC_NODE_ENV !== "production" || env.NEXT_PUBLIC_IS_LOG_STACK_ALLOWED,
+)
+
+const safeErrorLogger = {
+  log: (error: unknown, message: string, metadata: ErrorMetadata) => {
+    const record = newSafeErrorLogger.createRecord(error, message, metadata)
+    console.error(record)
+    return record
+  },
 }
 
-export { SafeErrorLogger }
+export { safeErrorLogger }
