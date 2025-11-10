@@ -5,6 +5,7 @@ import { siteConfig } from "@/core/site"
 import { fontGeistSans, fontGeistMono } from "@/core/fonts"
 
 import "@/styles/globals.css"
+import { Toaster } from "@/components/ui/sonner"
 
 export const metadata: Metadata = {
   title: {
@@ -43,6 +44,7 @@ export default function RootLayout({
           fontGeistMono.variable,
         )}
       >
+        <Toaster />
         {children}
       </body>
     </html>

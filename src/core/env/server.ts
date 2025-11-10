@@ -9,6 +9,9 @@ export const env = createEnv({
       .enum(["true", "false"])
       .transform(value => value === "true")
       .default(false),
+    DATABASE_URL: z.url(),
+    BETTER_AUTH_SECRET: z.string().min(12),
+    BETTER_AUTH_BASE_URL: z.url(),
   },
   onValidationError: issues => {
     console.error(
@@ -23,6 +26,9 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     LOG_LEVEL: process.env.LOG_LEVEL,
     SERVER_IS_LOG_ERROR_STACK_ALLOWED: process.env.SERVER_IS_LOG_ERROR_STACK_ALLOWED,
+    DATABASE_URL: process.env.DATABASE_URL,
+    BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
+    BETTER_AUTH_BASE_URL: process.env.BETTER_AUTH_BASE_URL,
     /* eslint-enable node/no-process-env */
   },
   emptyStringAsUndefined: true,

@@ -1,6 +1,8 @@
 import type { ErrorMetadata } from "@/tools/logger/error"
 
+import { db } from "@/core/db/connect"
 import { env } from "@/core/env/server"
+
 import { newLogger } from "@/tools/logger/logger"
 import { SafeErrorLogger } from "@/tools/logger/error"
 
@@ -15,5 +17,6 @@ const serverLogger = {
 }
 
 export const ctx = {
+  db,
   logger: serverLogger,
 }
