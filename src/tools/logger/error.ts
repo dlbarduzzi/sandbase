@@ -5,11 +5,11 @@ type ErrorFields = {
 }
 
 type ErrorMetadata = {
-  status: "INTERNAL_SERVER_ERROR"
+  status: string
   withStack: boolean
 }
 
-class BaseSafeErrorLogger {
+class SafeErrorLogger {
   private readonly isStackAllowed: boolean
 
   constructor(isStackAllowed: boolean) {
@@ -82,4 +82,4 @@ class BaseSafeErrorLogger {
   }
 }
 
-export { BaseSafeErrorLogger, type ErrorMetadata }
+export { type ErrorMetadata, SafeErrorLogger }

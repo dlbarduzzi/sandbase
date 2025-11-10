@@ -1,4 +1,3 @@
-import { env } from "@/core/env/server"
 import { createLogger, format, transports } from "winston"
 
 function newLogger(level: string) {
@@ -10,6 +9,4 @@ function newLogger(level: string) {
   })
 }
 
-const logger = newLogger(env.LOG_LEVEL)
-
-export { logger, newLogger }
+export { newLogger }

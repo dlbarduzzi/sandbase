@@ -1,11 +1,11 @@
-import type { ErrorMetadata } from "./base"
+import type { ErrorMetadata } from "./error"
 
-import { BaseSafeErrorLogger } from "./base"
+import { SafeErrorLogger } from "./error"
 import { describe, expect, it } from "vitest"
 
-describe("base logger", () => {
+describe("safe error logger", () => {
   const metadata: ErrorMetadata = {
-    status: "INTERNAL_SERVER_ERROR",
+    status: "TEST_STATUS",
     withStack: true,
   }
 
@@ -124,7 +124,7 @@ describe("base logger", () => {
   ]
 
   it("test error with stack", () => {
-    const l = new BaseSafeErrorLogger(false)
+    const l = new SafeErrorLogger(false)
 
     testCases.forEach(ts => {
       const t = l.sanitize(ts.error, ts.message, ts.metadata)
@@ -142,7 +142,7 @@ describe("base logger", () => {
   })
 
   it("test error without stack", () => {
-    const l = new BaseSafeErrorLogger(false)
+    const l = new SafeErrorLogger(false)
 
     const newTestCases = testCases.map(ts => {
       return {
