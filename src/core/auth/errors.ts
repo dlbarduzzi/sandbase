@@ -6,6 +6,7 @@ const codeError = z.object({
   code: z.enum([
     "EMAIL_NOT_VERIFIED",
     "INVALID_EMAIL_OR_PASSWORD",
+    "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL",
     INTERNAL_SERVER_ERROR,
   ]),
 })
